@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-import os
+import os,re
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from datetime import datetime
@@ -66,8 +66,22 @@ def save_payslip_pdf(employee, payroll_row):
     c.save()
     try:
         with open(os.path.join(os.path.dirname(__file__), "audit.log"), "a") as f:
-            f.write(f"{datetime.utcnow().isoformat()} - saved payslip - {path}\n")
+            f.write(f"{datetime.now().isoformat()} - saved payslip - {path}\n")
     except Exception:
         pass
 
     return path
+
+def validate_password(password: str):
+    pattern = re.compile(
+        r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$"
+    )
+
+    if not pattern.match(password):
+        raise HTTPException(
+            status_code=400,
+            detail="Password must be 8–15 characters long and include at least one uppercase, one lowercase, one digit, and one special character (@$!%*?&)."
+        )
+    return True
+    
+   
