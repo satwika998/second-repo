@@ -32,7 +32,7 @@ from auth import (
     get_current_user, require_roles, blacklisted_refresh_tokens,
     SECRET_KEY, ALGORITHM, authorize, get_user_roles
 )
-
+from utils import validate_password
 
 
 Base.metadata.create_all(bind=engine)
